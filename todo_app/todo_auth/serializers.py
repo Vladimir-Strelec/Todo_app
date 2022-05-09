@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.response import Response
 
+from todo_app.todo_auth.models import ShopUser
+
 UserModel = get_user_model()
 
 
@@ -22,3 +24,23 @@ class RegisterSerializersCreateApiView(serializers.ModelSerializer):
         result = super().to_representation(instance)
         result.pop('password')
         return result
+
+
+class LogoutSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShopUser
+        fields = '__all__'
+
+    # def validate(self, attrs):
+    #     a=5
+    #     return attrs
+
+
+
+
+class ViewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel
+        fields = '__all__'
+
+

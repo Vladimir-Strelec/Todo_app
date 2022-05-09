@@ -1,8 +1,13 @@
 from django.contrib.auth import get_user_model
-from rest_framework import views, generics
+from django.views import generic
+from rest_framework import generics
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from todo_app.todo_auth.serializers import RegisterSerializersCreateApiView
+from todo_app.todo_auth.serializers import RegisterSerializersCreateApiView, ViewsSerializer, LogoutSerializer
 
 from rest_framework.authtoken import views
 
@@ -13,23 +18,43 @@ class RegisterView(generics.CreateAPIView):
     queryset = UserModel.objects.all()
     serializer_class = RegisterSerializersCreateApiView
 
-
-# class LoginView(views.ObtainAuthToken):
-    # def post(self, request, *args, **kwargs):
-    #     serializer = self.serializer_class(data=request.data,
-    #                                        context={'request': request})
-    #     serializer.is_valid(raise_exception=True)
-    #     user = serializer.validated_data['user']
-    #     token, created = Token.objects.get_or_create(user=user)
-    #     from rest_framework.response import Response
-    #     return Response({
-    #         'token': token.key,
-    #         'user_id': user.pk,
-    #         'email': user.email
-    #     })
+    # def get(self, request):
+    #     users = UserModel.objects.all()
+    #     serializer = RegisterSerializersCreateApiView(users, many=True)
+    #     return Response(data=serializer.data)
 
 
-
-
-class LogOutView(views.APIView):
+class LoginView(views.ObtainAuthToken):
     pass
+
+
+class LogOutView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+
+    @staticmethod
+    def log_out(request):
+        try:
+            token = Token.objects.get(user=request.user)
+            token.delete()
+            return request
+        except:
+            return request
+
+    def initialize_request(self, *args, **kwargs):
+        result = super().initialize_request(*args, **kwargs)
+        self.log_out(result)
+        return result
+
+
+
+class TestView(views.APIView):
+
+    def get(self, request):
+        users = UserModel.objects.all()
+        serializer = ViewsSerializer(users, many=True)
+        return Response(serializer.data)
+
+
+class AuthView(generic.TemplateView):
+    template_name = 'social.html'

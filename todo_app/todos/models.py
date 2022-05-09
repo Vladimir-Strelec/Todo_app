@@ -9,9 +9,12 @@ class CategoryModels(models.Model):
     name = models.CharField(max_length=20, validators=(MinLengthValidator(2),),)
     description = models.CharField(max_length=20, validators=(MinLengthValidator(2),),)
 
+    def __str__(self):
+        return f"{self.name}"
+
 
 class TodoModels(models.Model):
     name = models.CharField(max_length=20, validators=(MinLengthValidator(2),),)
-    description = models.CharField(max_length=20, validators=(MinLengthValidator(2),),)
+    description = models.CharField(max_length=200, validators=(MinLengthValidator(2),),)
     category = models.ForeignKey(CategoryModels, on_delete=models.CASCADE,)
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE,)

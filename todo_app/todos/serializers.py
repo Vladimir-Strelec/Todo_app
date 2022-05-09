@@ -13,12 +13,20 @@ class CategorySerializers(serializers.ModelSerializer):
         fields = "__all__"
 
 
+
 class TodoSerializers(serializers.ModelSerializer):
     class Meta:
         model = TodoModels
-        fields = "__all__"
+        fields = ('name', 'description', 'category')
+
+
+
+    def validate(self, attrs):
+        attrs['user'] = self.initial_data['user']
+        return attrs
+
 
     def create(self, validated_data):
-        a = UserModel
-
-        return validated_data
+        self.validate(attrs=validated_data)
+        instance = TodoModels.objects.create(**validated_data)
+        return instance

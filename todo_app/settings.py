@@ -13,10 +13,10 @@ ALLOWED_HOSTS = []
 # CORS_ORIGIN_WHITELIST = [
 #     'http://localhost:3000',
 # ]
-
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-]
+#
+# CORS_ALLOWED_ORIGINS = [
+#     'http://localhost:3000',
+# ]
 
 
 INSTALLED_APPS = [
@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework',
     'corsheaders',
+    'social_django',
 
     'todo_app.todo_auth',
     'todo_app.todos',
@@ -90,6 +91,11 @@ DATABASES = {
 }
 
 
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.github.GithubOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
 
 AUTH_PASSWORD_VALIDATORS = [
     # {
@@ -122,3 +128,8 @@ STATIC_URL = 'static/'
 AUTH_USER_MODEL = 'todo_auth.ShopUser'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SOCIAL_AUTH_JSONFIELD_ENABLED = True
+
+SOCIAL_AUTH_GITHUB_KEY = '997925674666726dbe4a'
+SOCIAL_AUTH_GITHUB_SECRET = '22c2c07b7cb406b8725fab70e39652a2d39cd4a6'
